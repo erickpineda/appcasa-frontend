@@ -1,0 +1,95 @@
+// global.scss
+// Ionic core styles — obligatorio
+@import "@ionic/angular/css/core.css";
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+// Utilidades opcionales de Ionic
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+// ─── Estilos globales AppCasa ────────────────────────────────
+
+* {
+  box-sizing: border-box;
+}
+
+ion-card {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+.stat-card {
+  text-align: center;
+
+  .stat-number {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--ion-color-primary);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    color: var(--ion-color-medium);
+    margin-top: 4px;
+  }
+}
+
+// ─── Auth ─────────────────────────────────────────────────────
+.auth-content {
+  --background: linear-gradient(160deg, #1E4D9B 0%, #355fa5 50%, #4A7FD4 100%);
+}
+
+.auth-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 48px 24px 32px;
+  justify-content: center;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 32px;
+  color: white;
+
+  .auth-logo { font-size: 4rem; margin-bottom: 8px; }
+  h1 { font-size: 2rem; font-weight: 700; margin: 0 0 8px; }
+  p  { margin: 0; opacity: 0.85; font-size: 1rem; }
+}
+
+.auth-segment {
+  margin-bottom: 24px;
+  --background: rgba(255,255,255,0.15);
+  border-radius: 12px;
+
+  ion-segment-button {
+    --color: rgba(255,255,255,0.7);
+    --color-checked: #1E4D9B;
+    --background-checked: white;
+    --border-radius: 10px;
+  }
+}
+
+form {
+  ion-item {
+    --background: rgba(255,255,255,0.95);
+    --border-radius: 10px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+  }
+}
+
+.auth-btn {
+  margin-top: 24px;
+  --background: white;
+  --color: #1E4D9B;
+  --border-radius: 12px;
+  font-weight: 700;
+  height: 52px;
+}

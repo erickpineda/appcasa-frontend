@@ -1,0 +1,13 @@
+node_modules/
+.angular/
+www/
+dist/
+coverage/
+tmp/
+*.log
+*.tmp
+*.bak
+.idea/
+.vscode/
+Thumbs.db
+.DS_Store

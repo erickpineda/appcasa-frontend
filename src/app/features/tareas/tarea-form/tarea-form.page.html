@@ -1,0 +1,124 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-button (click)="volver()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title>{{ modoEdicion ? 'Editar tarea' : 'Nueva tarea' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="guardar()" [disabled]="form.invalid || cargando">
+        <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  <form [formGroup]="form">
+
+    <!-- Título -->
+    <ion-item>
+      <ion-label position="stacked">Título *</ion-label>
+      <ion-input
+        formControlName="titulo"
+        placeholder="¿Qué hay que hacer?"
+        [clearInput]="true"
+      ></ion-input>
+    </ion-item>
+    @if (form.get('titulo')?.invalid && form.get('titulo')?.touched) {
+      <ion-note color="danger">
+        El título es obligatorio
+      </ion-note>
+    }
+
+    <!-- Descripción -->
+    <ion-item>
+      <ion-label position="stacked">Descripción</ion-label>
+      <ion-textarea
+        formControlName="descripcion"
+        placeholder="Detalles opcionales..."
+        rows="3"
+        auto-grow="true"
+      ></ion-textarea>
+    </ion-item>
+
+    <!-- Categoría -->
+    <ion-item>
+      <ion-label position="stacked">Categoría</ion-label>
+      <ion-input
+        formControlName="categoria"
+        placeholder="Limpieza, Compras, Mascotas…"
+      ></ion-input>
+    </ion-item>
+
+    <!-- Prioridad -->
+    <ion-item>
+      <ion-label>Prioridad</ion-label>
+      <ion-select formControlName="idPrioridad" interface="popover">
+        @for (p of prioridades; track p) {
+          <ion-select-option [value]="p.id">
+            {{ p.label }}
+          </ion-select-option>
+        }
+      </ion-select>
+    </ion-item>
+
+    <!-- Fecha límite -->
+    <ion-item>
+      <ion-label position="stacked">Fecha límite</ion-label>
+      <ion-datetime-button datetime="fechaLimite"></ion-datetime-button>
+      <ion-modal [keepContentsMounted]="true">
+        <ng-template>
+          <ion-datetime
+            id="fechaLimite"
+            presentation="date"
+            formControlName="fechaLimite"
+            locale="es-ES"
+          ></ion-datetime>
+        </ng-template>
+      </ion-modal>
+    </ion-item>
+
+    <!-- Repetición -->
+    <ion-item>
+      <ion-label>¿Tarea periódica?</ion-label>
+      <ion-toggle formControlName="esPeriodica" slot="end"></ion-toggle>
+    </ion-item>
+
+    @if (form.value.esPeriodica) {
+      <ion-item>
+        <ion-label>Repetir</ion-label>
+        <ion-select formControlName="periodicidad" interface="popover">
+          @for (p of periodicidades; track p) {
+            <ion-select-option [value]="p.value">
+              {{ p.label }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+    }
+
+    <!-- Personal -->
+    <ion-item>
+      <ion-label>Solo para mí</ion-label>
+      <ion-toggle formControlName="esPersonal" slot="end"></ion-toggle>
+    </ion-item>
+
+  </form>
+
+  <div class="ion-padding">
+    <ion-button
+      expand="block"
+      color="primary"
+      (click)="guardar()"
+      [disabled]="form.invalid || cargando"
+      >
+      @if (cargando) {
+        <ion-spinner name="crescent" slot="start"></ion-spinner>
+      }
+      {{ modoEdicion ? 'Guardar cambios' : 'Crear tarea' }}
+    </ion-button>
+  </div>
+
+</ion-content>

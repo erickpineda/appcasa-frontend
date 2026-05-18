@@ -1,0 +1,67 @@
+// src/theme/variables.scss
+// ─── Paleta AppCasa ──────────────────────────────────────────
+
+:root {
+  --ion-color-primary:         #1E4D9B;
+  --ion-color-primary-rgb:     30,77,155;
+  --ion-color-primary-contrast:#ffffff;
+  --ion-color-primary-shade:   #1a4489;
+  --ion-color-primary-tint:    #355fa5;
+
+  --ion-color-secondary:       #3DC2FF;
+  --ion-color-secondary-rgb:   61,194,255;
+  --ion-color-secondary-contrast:#ffffff;
+  --ion-color-secondary-shade: #36abe0;
+  --ion-color-secondary-tint:  #50c8ff;
+
+  --ion-color-tertiary:        #5260FF;
+  --ion-color-tertiary-rgb:    82,96,255;
+  --ion-color-tertiary-contrast:#ffffff;
+  --ion-color-tertiary-shade:  #4854e0;
+  --ion-color-tertiary-tint:   #6370ff;
+
+  --ion-color-success:         #2DD36F;
+  --ion-color-success-rgb:     45,211,111;
+  --ion-color-success-contrast:#ffffff;
+  --ion-color-success-shade:   #28ba62;
+  --ion-color-success-tint:    #42d77d;
+
+  --ion-color-warning:         #FFC409;
+  --ion-color-warning-rgb:     255,196,9;
+  --ion-color-warning-contrast:#000000;
+  --ion-color-warning-shade:   #e0ac08;
+  --ion-color-warning-tint:    #ffca22;
+
+  --ion-color-danger:          #EB445A;
+  --ion-color-danger-rgb:      235,68,90;
+  --ion-color-danger-contrast: #ffffff;
+  --ion-color-danger-shade:    #cf3c4f;
+  --ion-color-danger-tint:     #ed576b;
+
+  --ion-color-dark:            #222428;
+  --ion-color-medium:          #92949C;
+  --ion-color-light:           #F4F5F8;
+
+  --ion-font-family:           -apple-system, BlinkMacSystemFont, 'Helvetica Neue',
+                               'Roboto', sans-serif;
+  --ion-background-color:      #F4F5F8;
+  --ion-toolbar-background:    var(--ion-color-primary);
+  --ion-toolbar-color:         #ffffff;
+}
+
+// ─── Tema oscuro ─────────────────────────────────────────────
+@media (prefers-color-scheme: dark) {
+  body {
+    --ion-color-primary:         #4A7FD4;
+    --ion-background-color:      #121212;
+    --ion-background-color-rgb:  18,18,18;
+    --ion-text-color:            #ffffff;
+    --ion-text-color-rgb:        255,255,255;
+    --ion-color-step-50:         #1e1e1e;
+    --ion-color-step-100:        #2a2a2a;
+    --ion-color-step-150:        #363636;
+    --ion-item-background:       #1e1e1e;
+    --ion-card-background:       #1e1e1e;
+    --ion-toolbar-background:    #1a1a2e;
+  }
+}
