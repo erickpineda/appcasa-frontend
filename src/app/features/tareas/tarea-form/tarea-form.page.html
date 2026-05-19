@@ -99,11 +99,43 @@
       </ion-item>
     }
 
+    @if (miembrosDisponibles.length > 0) {
+      <ion-item>
+        <ion-label>Asignar a</ion-label>
+        <ion-select
+          formControlName="miembroIds"
+          interface="alert"
+          [multiple]="true"
+          (ionChange)="onMiembrosChange($any($event.detail).value)"
+        >
+          @for (miembro of miembrosDisponibles; track miembro.id) {
+            <ion-select-option [value]="miembro.id">
+              {{ miembro.nombre }}
+            </ion-select-option>
+          }
+        </ion-select>
+      </ion-item>
+      @if (nombresMiembrosSeleccionados()) {
+        <ion-note color="medium">
+          Asignada a: {{ nombresMiembrosSeleccionados() }}
+        </ion-note>
+      }
+    }
+
     <!-- Personal -->
     <ion-item>
       <ion-label>Solo para mí</ion-label>
-      <ion-toggle formControlName="esPersonal" slot="end"></ion-toggle>
+      <ion-toggle
+        formControlName="esPersonal"
+        slot="end"
+        (ionChange)="onEsPersonalChange($any($event.detail).checked)"
+      ></ion-toggle>
     </ion-item>
+    @if (form.value.esPersonal) {
+      <ion-note color="medium">
+        Al marcar esta opción se limpian las asignaciones de miembros.
+      </ion-note>
+    }
 
   </form>
 

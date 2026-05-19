@@ -3,8 +3,9 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastController } from '@ionic/angular';
 import { HogarService } from '../../../core/services/hogar.service';
+import { MiembroService } from '../../../core/services/miembro.service';
 import { TareaService, TareaRequest } from '../../../core/services/tarea.service';
-import { Tarea } from '../../../core/models/domain.models';
+import { MiembroHogar, Tarea } from '../../../core/models/domain.models';
 
 @Component({
   selector: 'app-tarea-form',
@@ -17,6 +18,7 @@ export class TareaFormPage implements OnInit {
   cargando = false;
   modoEdicion = false;
   tareaId: string | null = null;
+  miembrosDisponibles: MiembroHogar[] = [];
 
   readonly prioridades = [
     { codigo: 'BAJA', label: 'Baja'    },
@@ -36,6 +38,7 @@ export class TareaFormPage implements OnInit {
   constructor(
     private fb: FormBuilder,
     private hogarService: HogarService,
+    private miembroService: MiembroService,
     private tareaService: TareaService,
     private route: ActivatedRoute,
     private router: Router,
@@ -44,6 +47,7 @@ export class TareaFormPage implements OnInit {
 
   ngOnInit(): void {
     this.initForm();
+    this.cargarMiembros();
     this.tareaId = this.route.snapshot.paramMap.get('id');
     if (this.tareaId) {
       this.modoEdicion = true;
@@ -60,7 +64,25 @@ export class TareaFormPage implements OnInit {
       fechaLimite:   [''],
       esPeriodica:   [false],
       periodicidadCodigo: [null],
+      miembroIds:    [[]],
       esPersonal:    [false],
+    });
+  }
+
+  private cargarMiembros(): void {
+    const idHogar = this.hogarService.idHogarActual;
+    if (!idHogar) {
+      this.miembrosDisponibles = [];
+      return;
+    }
+
+    this.miembroService.listarPorHogar(idHogar).subscribe({
+      next: (miembros) => {
+        this.miembrosDisponibles = miembros;
+      },
+      error: () => {
+        this.miembrosDisponibles = [];
+      },
     });
   }
 
@@ -76,12 +98,42 @@ export class TareaFormPage implements OnInit {
           fechaLimite:       tarea.fechaLimite,
           esPeriodica:       tarea.esPeriodica,
           periodicidadCodigo: tarea.periodicidad?.codigo ?? null,
+          miembroIds:        tarea.asignaciones?.map((asignacion) => asignacion.miembroId) ?? [],
           esPersonal:        tarea.esPersonal,
-        });
+        }, { emitEvent: false });
         this.cargando = false;
       },
       error: () => { this.cargando = false; this.volver(); },
     });
+  }
+
+  onMiembrosChange(idsMiembros: string[] | null | undefined): void {
+    const seleccion = idsMiembros ?? [];
+    this.form.patchValue({ miembroIds: seleccion }, { emitEvent: false });
+
+    if (seleccion.length > 0 && this.form.value.esPersonal) {
+      this.form.patchValue({ esPersonal: false }, { emitEvent: false });
+    }
+  }
+
+  onEsPersonalChange(esPersonal: boolean): void {
+    this.form.patchValue({ esPersonal }, { emitEvent: false });
+
+    if (esPersonal) {
+      this.form.patchValue({ miembroIds: [] }, { emitEvent: false });
+    }
+  }
+
+  nombresMiembrosSeleccionados(): string {
+    const seleccionados = (this.form.value.miembroIds ?? []) as string[];
+    if (!seleccionados.length) {
+      return '';
+    }
+
+    return this.miembrosDisponibles
+      .filter((miembro) => seleccionados.includes(miembro.id))
+      .map((miembro) => miembro.nombre)
+      .join(', ');
   }
 
   async guardar(): Promise<void> {
@@ -99,6 +151,7 @@ export class TareaFormPage implements OnInit {
     }
 
     this.cargando = true;
+    const miembroIds = ((this.form.value.miembroIds ?? []) as string[]).filter(Boolean);
     const request: TareaRequest = {
       hogarCodigo:       hogarCodigo,
       titulo:            this.form.value.titulo,
@@ -108,7 +161,8 @@ export class TareaFormPage implements OnInit {
       fechaLimite:       this.form.value.fechaLimite || undefined,
       esPeriodica:       this.form.value.esPeriodica,
       periodicidadCodigo: this.form.value.periodicidadCodigo || undefined,
-      esPersonal:        this.form.value.esPersonal,
+      esPersonal:        miembroIds.length > 0 ? false : this.form.value.esPersonal,
+      miembroIds:        miembroIds.length > 0 ? miembroIds : undefined,
     };
 
     const op$ = this.modoEdicion && this.tareaId

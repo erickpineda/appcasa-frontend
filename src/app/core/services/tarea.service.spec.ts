@@ -25,10 +25,12 @@ describe('TareaService', () => {
       titulo: 'Comprar pienso',
       prioridadCodigo: 'ALTA',
       esPersonal: false,
+      miembroIds: ['m1', 'm2'],
     }).subscribe();
 
     const req = httpMock.expectOne('http://localhost:8080/api/v1/tareas');
     expect(req.request.body.prioridadCodigo).toBe('ALTA');
+    expect(req.request.body.miembroIds).toEqual(['m1', 'm2']);
     expect(req.request.body.idPrioridad).toBeUndefined();
     expect(req.request.body.idHogar).toBeUndefined();
 
@@ -42,4 +44,3 @@ describe('TareaService', () => {
     req.flush([]);
   });
 });
-

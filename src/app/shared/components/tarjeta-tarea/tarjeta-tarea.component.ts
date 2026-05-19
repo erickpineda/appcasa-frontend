@@ -31,6 +31,12 @@ import { Tarea } from '../../../core/models/domain.models';
             {{ tarea.fechaLimite | date: 'dd/MM/yyyy' }}
           </p>
         }
+        @if (nombresAsignados.length > 0) {
+          <p class="asignados">
+            <ion-icon name="people-outline"></ion-icon>
+            {{ nombresAsignados.join(', ') }}
+          </p>
+        }
       </ion-label>
     
       <app-badge-prioridad
@@ -49,10 +55,21 @@ import { Tarea } from '../../../core/models/domain.models';
       align-items: center;
       gap: 4px;
     }
+    .asignados {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
   `],
 })
 export class TarjetaTareaComponent {
   @Input() tarea!: Tarea;
   @Output() seleccionada = new EventEmitter<Tarea>();
   @Output() completar    = new EventEmitter<Tarea>();
+
+  get nombresAsignados(): string[] {
+    return (this.tarea?.asignaciones ?? [])
+      .map((asignacion) => asignacion.nombreMiembro?.trim())
+      .filter((nombre): nombre is string => !!nombre);
+  }
 }
