@@ -8,18 +8,61 @@
     </ion-buttons>
   </ion-toolbar>
 
-  <ion-toolbar>
-    <ion-segment [(ngModel)]="segmento">
-      <ion-segment-button value="pendientes">Pendientes</ion-segment-button>
-      <ion-segment-button value="completadas">Completadas</ion-segment-button>
-    </ion-segment>
+  <ion-toolbar class="tareas-segment-toolbar">
+    <div class="tareas-segment-shell">
+      <ion-segment [(ngModel)]="segmento" class="tareas-segment">
+        <ion-segment-button value="pendientes" class="tareas-segment-button">
+          Pendientes
+        </ion-segment-button>
+        <ion-segment-button value="completadas" class="tareas-segment-button">
+          Completadas
+        </ion-segment-button>
+      </ion-segment>
+    </div>
   </ion-toolbar>
 </ion-header>
 
 <ion-content>
-  <ion-refresher slot="fixed" (ionRefresh)="cargar()">
+  <ion-refresher slot="fixed" (ionRefresh)="cargarContexto()">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
+  <ion-card class="ion-margin">
+    <ion-card-header>
+      <ion-card-subtitle>Contexto de trabajo</ion-card-subtitle>
+      <ion-card-title>
+        {{ hogarActual?.nombre || 'Elige un hogar para ver y crear tareas' }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @if (hogares.length > 0) {
+        <ion-item lines="none">
+          <ion-label position="stacked">Cambiar hogar</ion-label>
+          <ion-select
+            [value]="hogarActual?.id"
+            interface="popover"
+            placeholder="Selecciona un hogar"
+            (ionChange)="seleccionarHogar($any($event.detail).value)"
+          >
+            @for (hogar of hogares; track hogar.id) {
+              <ion-select-option [value]="hogar.id">
+                {{ hogar.nombre }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+      }
+
+      @if (!hogarActual) {
+        <ion-button expand="block" fill="outline" (click)="crearHogar()">
+          Crear hogar
+        </ion-button>
+        <ion-button expand="block" fill="clear" (click)="unirseConCodigo()">
+          Unirme con código
+        </ion-button>
+      }
+    </ion-card-content>
+  </ion-card>
 
   <!-- Skeleton -->
   @if (cargando) {
@@ -33,7 +76,7 @@
   }
 
   <!-- Lista de tareas -->
-  @if (!cargando && tareas.length > 0) {
+  @if (!cargando && hogarActual && tareas.length > 0) {
     <ion-list>
       @for (tarea of tareas; track tarea) {
         <ion-item-sliding>
@@ -53,7 +96,7 @@
   }
 
   <!-- Estado vacío -->
-  @if (!cargando && tareas.length === 0) {
+  @if (!cargando && hogarActual && tareas.length === 0) {
     <app-empty-state
       icono="checkmark-done-outline"
       titulo="Sin tareas pendientes"
@@ -62,10 +105,20 @@
     ></app-empty-state>
   }
 
+  @if (!cargando && !hogarActual) {
+    <ion-card class="ion-margin">
+      <ion-card-content class="ion-text-center">
+        Selecciona un hogar o crea uno para poder trabajar con tus tareas.
+      </ion-card-content>
+    </ion-card>
+  }
+
 </ion-content>
 
-<ion-fab vertical="bottom" horizontal="end" slot="fixed">
-  <ion-fab-button color="primary" (click)="nueva()">
-    <ion-icon name="add"></ion-icon>
-  </ion-fab-button>
-</ion-fab>
+@if (hogarActual) {
+  <ion-fab vertical="bottom" horizontal="end" slot="fixed">
+    <ion-fab-button color="primary" (click)="nueva()">
+      <ion-icon name="add"></ion-icon>
+    </ion-fab-button>
+  </ion-fab>
+}

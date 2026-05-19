@@ -2,7 +2,7 @@ import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { RouterTestingModule } from '@angular/router/testing';
-import { ToastController } from '@ionic/angular';
+import { AlertController, ToastController } from '@ionic/angular';
 import { of } from 'rxjs';
 import { SharedModule } from '../../../shared/shared.module';
 import { Hogar } from '../../../core/models/domain.models';
@@ -18,9 +18,26 @@ class HogarServiceStub {
     codigo: 'CASA1234',
     idEstado: 1,
   };
+  hogaresDisponibles: Hogar[] = this.hogarActual ? [this.hogarActual] : [];
 
   get idHogarActual(): string {
     return this.hogarActual?.id ?? '';
+  }
+
+  listarMisHogares() {
+    return of(this.hogaresDisponibles);
+  }
+
+  seleccionar(hogar: Hogar | null): void {
+    this.hogarActual = hogar;
+  }
+
+  crear() {
+    return of(this.hogarActual as Hogar);
+  }
+
+  unirse() {
+    return of(this.hogarActual as Hogar);
   }
 }
 
@@ -45,6 +62,10 @@ describe('TareaFormPage', () => {
     toast.present.and.returnValue(Promise.resolve());
     const toastCtrl = jasmine.createSpyObj<ToastController>('ToastController', ['create']);
     toastCtrl.create.and.returnValue(Promise.resolve(toast as any));
+    const alert = jasmine.createSpyObj('HTMLIonAlertElement', ['present']);
+    alert.present.and.returnValue(Promise.resolve());
+    const alertCtrl = jasmine.createSpyObj('AlertController', ['create']);
+    alertCtrl.create.and.returnValue(Promise.resolve(alert as any));
 
     await TestBed.configureTestingModule({
       imports: [SharedModule, RouterTestingModule],
@@ -54,6 +75,7 @@ describe('TareaFormPage', () => {
         { provide: MiembroService, useValue: miembroService },
         { provide: TareaService, useValue: tareaService },
         { provide: ToastController, useValue: toastCtrl },
+        { provide: AlertController, useValue: alertCtrl },
         {
           provide: ActivatedRoute,
           useValue: {

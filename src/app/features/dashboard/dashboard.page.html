@@ -14,9 +14,44 @@
 
 <ion-content class="ion-padding">
 
-  <ion-refresher slot="fixed" (ionRefresh)="cargarResumen()">
+  <ion-refresher slot="fixed" (ionRefresh)="cargarContexto()">
     <ion-refresher-content></ion-refresher-content>
   </ion-refresher>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-subtitle>Hogar activo</ion-card-subtitle>
+      <ion-card-title>
+        {{ hogarActual?.nombre || 'Elige un hogar para empezar' }}
+      </ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      @if (hogares.length > 0) {
+        <ion-item lines="none">
+          <ion-label position="stacked">Cambiar hogar</ion-label>
+          <ion-select
+            [value]="hogarActual?.id"
+            interface="popover"
+            placeholder="Selecciona un hogar"
+            (ionChange)="seleccionarHogar($any($event.detail).value)"
+          >
+            @for (hogar of hogares; track hogar.id) {
+              <ion-select-option [value]="hogar.id">
+                {{ hogar.nombre }}
+              </ion-select-option>
+            }
+          </ion-select>
+        </ion-item>
+      }
+
+      <ion-button expand="block" fill="outline" (click)="crearHogar()">
+        Crear hogar
+      </ion-button>
+      <ion-button expand="block" fill="clear" (click)="unirseConCodigo()">
+        Unirme con código
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
 
   <!-- Skeleton mientras carga -->
   @if (cargando) {
@@ -24,7 +59,7 @@
     <ion-skeleton-text animated style="height: 120px; border-radius: 12px; margin-top: 16px"></ion-skeleton-text>
   }
 
-  @if (!cargando && resumen) {
+  @if (!cargando && resumen && hogarActual) {
     <!-- Resumen rápido -->
     <ion-grid class="resumen-grid">
       <ion-row>
@@ -71,6 +106,14 @@
         }
       </ion-list>
     }
+  }
+
+  @if (!cargando && !hogarActual) {
+    <ion-card>
+      <ion-card-content>
+        Selecciona un hogar o crea uno nuevo para ver el resumen, las tareas y el resto de herramientas.
+      </ion-card-content>
+    </ion-card>
   }
 
 </ion-content>
