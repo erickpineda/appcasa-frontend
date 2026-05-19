@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, tap } from 'rxjs';
+import { BehaviorSubject, catchError, map, Observable, of, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Usuario } from '../models/domain.models';
 
@@ -18,7 +18,6 @@ export interface RegistroRequest {
 
 export interface AuthResponse {
   token: string;
-  refreshToken: string;
   usuario: Usuario;
 }
 
@@ -35,18 +34,56 @@ export class AuthService {
   constructor(private http: HttpClient) {}
 
   login(request: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request, {
+      withCredentials: true,
+    }).pipe(
       tap((res) => this.guardarSesion(res))
     );
   }
 
   registro(request: RegistroRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/registro`, request).pipe(
+    return this.http.post<AuthResponse>(`${this.apiUrl}/registro`, request, {
+      withCredentials: true,
+    }).pipe(
       tap((res) => this.guardarSesion(res))
     );
   }
 
-  logout(): void {
+  refresh(): Observable<AuthResponse> {
+    return this.http.post<AuthResponse>(`${this.apiUrl}/refresh`, {}, {
+      withCredentials: true,
+    }).pipe(
+      tap((res) => this.guardarSesion(res))
+    );
+  }
+
+  restoreSession(): Observable<boolean> {
+    if (this.getToken()) {
+      return of(true);
+    }
+
+    return this.refresh().pipe(
+      map(() => true),
+      catchError(() => {
+        this.clearSession();
+        return of(false);
+      })
+    );
+  }
+
+  logout(): Observable<void> {
+    return this.http.post<void>(`${this.apiUrl}/logout`, {}, {
+      withCredentials: true,
+    }).pipe(
+      tap(() => this.clearSession()),
+      catchError((error) => {
+        this.clearSession();
+        throw error;
+      })
+    );
+  }
+
+  clearSession(): void {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
     this.usuarioSubject.next(null);
