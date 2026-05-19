@@ -60,6 +60,13 @@ const routes: Routes = [
           ),
       },
       {
+        path: 'perfil',
+        loadChildren: () =>
+          import('./features/perfil/perfil.module').then(
+            (m) => m.PerfilModule
+          ),
+      },
+      {
         path: 'listas',
         loadChildren: () =>
           import('./features/listas/listas.module').then(

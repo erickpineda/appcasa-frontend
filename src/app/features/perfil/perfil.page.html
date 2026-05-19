@@ -1,0 +1,53 @@
+<ion-header>
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/dashboard"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content class="ion-padding">
+  @if (usuario) {
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>{{ usuario.nombre }}{{ usuario.apellidos ? ' ' + usuario.apellidos : '' }}</ion-card-title>
+        <ion-card-subtitle>{{ usuario.email }}</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        Tu espacio de perfil y preferencias personales.
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list inset="true">
+      <ion-list-header>
+        <ion-label>Ajustes</ion-label>
+      </ion-list-header>
+
+      <ion-item>
+        <ion-label>
+          <h2>Tema</h2>
+          <p>Proximamente</p>
+        </ion-label>
+        <ion-note slot="end">{{ usuario.tema }}</ion-note>
+      </ion-item>
+
+      <ion-item>
+        <ion-label>
+          <h2>Idioma</h2>
+          <p>Proximamente</p>
+        </ion-label>
+        <ion-note slot="end">{{ usuario.locale }}</ion-note>
+      </ion-item>
+    </ion-list>
+
+    <ion-button
+      expand="block"
+      color="danger"
+      class="ion-margin-top"
+      [disabled]="cerrandoSesion"
+      (click)="cerrarSesion()">
+      Cerrar sesion
+    </ion-button>
+  }
+</ion-content>
