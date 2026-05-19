@@ -30,15 +30,15 @@ export class TareasPage implements OnInit {
 
   cargar(): void {
     this.cargando = true;
-    const idHogar = this.hogarService.idHogarActual;
+    const hogarCodigo = this.hogarService.hogarActual?.codigo ?? '';
 
-    if (!idHogar) {
+    if (!hogarCodigo) {
       this.tareas = [];
       this.cargando = false;
       return;
     }
 
-    this.tareaService.listarPendientes(idHogar).subscribe({
+    this.tareaService.listarPendientes(hogarCodigo).subscribe({
       next: (tareas) => { this.tareas = tareas; this.cargando = false; },
       error: ()       => { this.cargando = false; },
     });

@@ -5,16 +5,16 @@ import { environment } from '../../../environments/environment';
 import { Tarea } from '../models/domain.models';
 
 export interface TareaRequest {
-  idHogar: string;
+  hogarCodigo: string;
   titulo: string;
   descripcion?: string;
-  idPrioridad?: number;
+  prioridadCodigo?: 'BAJA' | 'MEDIA' | 'ALTA' | 'URGENTE';
   categoria?: string;
   fechaLimite?: string;
   esPeriodica?: boolean;
-  periodicidad?: string;
+  periodicidadCodigo?: 'DIARIA' | 'SEMANAL' | 'MENSUAL' | 'ANUAL';
   esPersonal?: boolean;
-  idsMiembros?: string[];
+  miembroIds?: string[];
 }
 
 @Injectable({ providedIn: 'root' })
@@ -24,8 +24,8 @@ export class TareaService {
 
   constructor(private http: HttpClient) {}
 
-  listarPendientes(idHogar: string): Observable<Tarea[]> {
-    return this.http.get<Tarea[]>(`${this.apiUrl}/hogar/${idHogar}/pendientes`);
+  listarPendientes(hogarCodigo: string): Observable<Tarea[]> {
+    return this.http.get<Tarea[]>(`${this.apiUrl}/hogar/${hogarCodigo}/pendientes`);
   }
 
   obtener(id: string): Observable<Tarea> {

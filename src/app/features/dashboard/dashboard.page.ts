@@ -24,15 +24,15 @@ export class DashboardPage implements OnInit {
 
   cargarResumen(): void {
     this.cargando = true;
-    const idHogar = this.hogarService.idHogarActual;
+    const hogarCodigo = this.hogarService.hogarActual?.codigo ?? '';
 
-    if (!idHogar) {
+    if (!hogarCodigo) {
       this.resumen = this.crearResumenVacio();
       this.cargando = false;
       return;
     }
 
-    this.tareaService.listarPendientes(idHogar).subscribe({
+    this.tareaService.listarPendientes(hogarCodigo).subscribe({
       next: (tareas) => {
         // TODO: llamar también a RecordatorioService, EventoService, etc.
         this.resumen = {

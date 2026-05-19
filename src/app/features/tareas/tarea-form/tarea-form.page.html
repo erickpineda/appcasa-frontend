@@ -55,9 +55,9 @@
     <!-- Prioridad -->
     <ion-item>
       <ion-label>Prioridad</ion-label>
-      <ion-select formControlName="idPrioridad" interface="popover">
+      <ion-select formControlName="prioridadCodigo" interface="popover">
         @for (p of prioridades; track p) {
-          <ion-select-option [value]="p.id">
+          <ion-select-option [value]="p.codigo">
             {{ p.label }}
           </ion-select-option>
         }
@@ -89,9 +89,9 @@
     @if (form.value.esPeriodica) {
       <ion-item>
         <ion-label>Repetir</ion-label>
-        <ion-select formControlName="periodicidad" interface="popover">
+        <ion-select formControlName="periodicidadCodigo" interface="popover">
           @for (p of periodicidades; track p) {
-            <ion-select-option [value]="p.value">
+            <ion-select-option [value]="p.codigo">
               {{ p.label }}
             </ion-select-option>
           }

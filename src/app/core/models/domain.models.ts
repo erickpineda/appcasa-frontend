@@ -9,6 +9,11 @@ export interface BaseEntity {
   version?: number;
 }
 
+export interface CatalogoValor {
+  codigo: string;
+  label: string;
+}
+
 // ---
 
 export interface Hogar extends BaseEntity {
@@ -70,27 +75,25 @@ export type Periodicidad =
   | 'CUSTOM';
 
 export interface Tarea extends BaseEntity {
-  idHogar: string;
+  hogarCodigo: string;
   titulo: string;
   descripcion?: string;
-  idPrioridad: number;
-  prioridad?: Prioridad;
+  prioridad: CatalogoValor;
   categoria?: string;
   fechaLimite?: string;
   fechaCompletada?: string;
   esPeriodica: boolean;
-  periodicidad?: Periodicidad;
+  periodicidad?: CatalogoValor;
   reglaRecurrencia?: string;
   esPersonal: boolean;
-  idCreador?: string;
   adjuntoUrl?: string;
-  idEstado: number;
+  estado: CatalogoValor;
   asignaciones?: TareaAsignacion[];
 }
 
 export interface TareaAsignacion extends BaseEntity {
-  idTarea: string;
-  idMiembro: string;
+  miembroId: string;
+  nombreMiembro?: string;
   miembro?: MiembroHogar;
   aceptada?: boolean;
 }

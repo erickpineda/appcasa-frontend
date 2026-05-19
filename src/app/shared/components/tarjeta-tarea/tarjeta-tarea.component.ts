@@ -35,7 +35,7 @@ import { Tarea } from '../../../core/models/domain.models';
     
       <app-badge-prioridad
         slot="end"
-        [idPrioridad]="tarea.idPrioridad"
+        [prioridadCodigo]="tarea.prioridad.codigo"
       ></app-badge-prioridad>
     </ion-item>
     `,

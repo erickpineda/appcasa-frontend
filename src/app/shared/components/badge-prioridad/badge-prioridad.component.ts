@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
 
-const CONFIG: Record<number, { label: string; color: string }> = {
-  1: { label: 'Baja',    color: 'success' },
-  2: { label: 'Media',   color: 'warning' },
-  3: { label: 'Alta',    color: 'danger'  },
-  4: { label: 'Urgente', color: 'danger'  },
+const CONFIG: Record<string, { label: string; color: string }> = {
+  BAJA: { label: 'Baja', color: 'success' },
+  MEDIA: { label: 'Media', color: 'warning' },
+  ALTA: { label: 'Alta', color: 'danger' },
+  URGENTE: { label: 'Urgente', color: 'danger' },
 };
 
 @Component({
@@ -15,9 +15,9 @@ const CONFIG: Record<number, { label: string; color: string }> = {
   `,
 })
 export class BadgePrioridadComponent {
-  @Input() idPrioridad: number = 1;
+  @Input() prioridadCodigo: string = 'BAJA';
 
   get cfg() {
-    return CONFIG[this.idPrioridad] ?? CONFIG[1];
+    return CONFIG[this.prioridadCodigo] ?? CONFIG['BAJA'];
   }
 }

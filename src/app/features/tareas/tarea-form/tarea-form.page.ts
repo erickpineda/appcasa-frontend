@@ -19,18 +19,18 @@ export class TareaFormPage implements OnInit {
   tareaId: string | null = null;
 
   readonly prioridades = [
-    { id: 1, label: 'Baja'    },
-    { id: 2, label: 'Media'   },
-    { id: 3, label: 'Alta'    },
-    { id: 4, label: 'Urgente' },
+    { codigo: 'BAJA', label: 'Baja'    },
+    { codigo: 'MEDIA', label: 'Media'   },
+    { codigo: 'ALTA', label: 'Alta'     },
+    { codigo: 'URGENTE', label: 'Urgente' },
   ];
 
   readonly periodicidades = [
-    { value: null,      label: 'Sin repetición' },
-    { value: 'DIARIA',  label: 'Diaria'          },
-    { value: 'SEMANAL', label: 'Semanal'          },
-    { value: 'MENSUAL', label: 'Mensual'          },
-    { value: 'ANUAL',   label: 'Anual'            },
+    { codigo: null,      label: 'Sin repetición' },
+    { codigo: 'DIARIA',  label: 'Diaria'          },
+    { codigo: 'SEMANAL', label: 'Semanal'         },
+    { codigo: 'MENSUAL', label: 'Mensual'         },
+    { codigo: 'ANUAL',   label: 'Anual'           },
   ];
 
   constructor(
@@ -55,11 +55,11 @@ export class TareaFormPage implements OnInit {
     this.form = this.fb.group({
       titulo:        ['', [Validators.required, Validators.maxLength(200)]],
       descripcion:   [''],
-      idPrioridad:   [1],
+      prioridadCodigo: ['BAJA'],
       categoria:     [''],
       fechaLimite:   [''],
       esPeriodica:   [false],
-      periodicidad:  [null],
+      periodicidadCodigo: [null],
       esPersonal:    [false],
     });
   }
@@ -69,14 +69,14 @@ export class TareaFormPage implements OnInit {
     this.tareaService.obtener(id).subscribe({
       next: (tarea: Tarea) => {
         this.form.patchValue({
-          titulo:       tarea.titulo,
-          descripcion:  tarea.descripcion,
-          idPrioridad:  tarea.idPrioridad,
-          categoria:    tarea.categoria,
-          fechaLimite:  tarea.fechaLimite,
-          esPeriodica:  tarea.esPeriodica,
-          periodicidad: tarea.periodicidad,
-          esPersonal:   tarea.esPersonal,
+          titulo:            tarea.titulo,
+          descripcion:       tarea.descripcion,
+          prioridadCodigo:   tarea.prioridad?.codigo ?? 'BAJA',
+          categoria:         tarea.categoria,
+          fechaLimite:       tarea.fechaLimite,
+          esPeriodica:       tarea.esPeriodica,
+          periodicidadCodigo: tarea.periodicidad?.codigo ?? null,
+          esPersonal:        tarea.esPersonal,
         });
         this.cargando = false;
       },
@@ -87,8 +87,8 @@ export class TareaFormPage implements OnInit {
   async guardar(): Promise<void> {
     if (this.form.invalid) { return; }
 
-    const idHogar = this.hogarService.idHogarActual;
-    if (!idHogar) {
+    const hogarCodigo = this.hogarService.hogarActual?.codigo ?? '';
+    if (!hogarCodigo) {
       const toast = await this.toastCtrl.create({
         message: 'Selecciona un hogar antes de guardar la tarea',
         duration: 2500,
@@ -100,15 +100,15 @@ export class TareaFormPage implements OnInit {
 
     this.cargando = true;
     const request: TareaRequest = {
-      idHogar:      idHogar,
-      titulo:       this.form.value.titulo,
-      descripcion:  this.form.value.descripcion,
-      idPrioridad:  this.form.value.idPrioridad,
-      categoria:    this.form.value.categoria,
-      fechaLimite:  this.form.value.fechaLimite || undefined,
-      esPeriodica:  this.form.value.esPeriodica,
-      periodicidad: this.form.value.periodicidad || undefined,
-      esPersonal:   this.form.value.esPersonal,
+      hogarCodigo:       hogarCodigo,
+      titulo:            this.form.value.titulo,
+      descripcion:       this.form.value.descripcion,
+      prioridadCodigo:   this.form.value.prioridadCodigo,
+      categoria:         this.form.value.categoria,
+      fechaLimite:       this.form.value.fechaLimite || undefined,
+      esPeriodica:       this.form.value.esPeriodica,
+      periodicidadCodigo: this.form.value.periodicidadCodigo || undefined,
+      esPersonal:        this.form.value.esPersonal,
     };
 
     const op$ = this.modoEdicion && this.tareaId
