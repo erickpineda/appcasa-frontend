@@ -37,6 +37,20 @@ describe('TareaService', () => {
     req.flush({});
   });
 
+  it('sends fechaLimite as full ISO datetime', () => {
+    service.crear({
+      hogarCodigo: 'CASA1234',
+      titulo: 'Comprar pienso',
+      fechaLimite: '2026-05-20T18:30:00Z',
+      esPersonal: false,
+    }).subscribe();
+
+    const req = httpMock.expectOne('http://localhost:8080/api/v1/tareas');
+    expect(req.request.body.fechaLimite).toBe('2026-05-20T18:30:00Z');
+
+    req.flush({});
+  });
+
   it('lists pending tasks by hogar codigo', () => {
     service.listarPendientes('CASA1234').subscribe();
     const req = httpMock.expectOne('http://localhost:8080/api/v1/tareas/hogar/CASA1234/pendientes');

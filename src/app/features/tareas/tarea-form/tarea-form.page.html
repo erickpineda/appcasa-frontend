@@ -7,7 +7,7 @@
     </ion-buttons>
     <ion-title>{{ modoEdicion ? 'Editar tarea' : 'Nueva tarea' }}</ion-title>
     <ion-buttons slot="end">
-      <ion-button (click)="guardar()" [disabled]="form.invalid || cargando">
+      <ion-button (click)="guardar()" [disabled]="form.invalid || cargando || !hogarActivo">
         <ion-icon name="checkmark-outline" slot="icon-only"></ion-icon>
       </ion-button>
     </ion-buttons>
@@ -15,6 +15,17 @@
 </ion-header>
 
 <ion-content class="ion-padding">
+  @if (!hogarActivo) {
+    <ion-card color="warning">
+      <ion-card-header>
+        <ion-card-title>Selecciona un hogar antes de crear la tarea</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        Activa un hogar en la app y vuelve a esta pantalla para poder guardar la tarea.
+      </ion-card-content>
+    </ion-card>
+  }
+
   <form [formGroup]="form">
 
     <!-- Título -->
@@ -46,10 +57,17 @@
     <!-- Categoría -->
     <ion-item>
       <ion-label position="stacked">Categoría</ion-label>
-      <ion-input
+      <ion-select
         formControlName="categoria"
-        placeholder="Limpieza, Compras, Mascotas…"
-      ></ion-input>
+        interface="popover"
+        placeholder="Selecciona una categoría"
+      >
+        @for (categoria of categorias; track categoria.value) {
+          <ion-select-option [value]="categoria.value">
+            {{ categoria.label }}
+          </ion-select-option>
+        }
+      </ion-select>
     </ion-item>
 
     <!-- Prioridad -->
@@ -66,13 +84,13 @@
 
     <!-- Fecha límite -->
     <ion-item>
-      <ion-label position="stacked">Fecha límite</ion-label>
+      <ion-label position="stacked">Vence el</ion-label>
       <ion-datetime-button datetime="fechaLimite"></ion-datetime-button>
       <ion-modal [keepContentsMounted]="true">
         <ng-template>
           <ion-datetime
             id="fechaLimite"
-            presentation="date"
+            presentation="date-time"
             formControlName="fechaLimite"
             locale="es-ES"
           ></ion-datetime>
@@ -144,7 +162,7 @@
       expand="block"
       color="primary"
       (click)="guardar()"
-      [disabled]="form.invalid || cargando"
+      [disabled]="form.invalid || cargando || !hogarActivo"
       >
       @if (cargando) {
         <ion-spinner name="crescent" slot="start"></ion-spinner>

@@ -28,7 +28,7 @@ import { Tarea } from '../../../core/models/domain.models';
         @if (tarea.fechaLimite) {
           <p class="fecha">
             <ion-icon name="calendar-outline"></ion-icon>
-            {{ tarea.fechaLimite | date: 'dd/MM/yyyy' }}
+            {{ tarea.fechaLimite | date: 'dd/MM/yyyy HH:mm' }}
           </p>
         }
         @if (nombresAsignados.length > 0) {

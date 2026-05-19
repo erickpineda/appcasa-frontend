@@ -35,6 +35,16 @@ export class TareaFormPage implements OnInit {
     { codigo: 'ANUAL',   label: 'Anual'           },
   ];
 
+  readonly categorias = [
+    { value: 'Limpieza', label: 'Limpieza' },
+    { value: 'Compras', label: 'Compras' },
+    { value: 'Cocina', label: 'Cocina' },
+    { value: 'Mascotas', label: 'Mascotas' },
+    { value: 'Niños', label: 'Niños' },
+    { value: 'Mantenimiento', label: 'Mantenimiento' },
+    { value: 'Otros', label: 'Otros' },
+  ];
+
   constructor(
     private fb: FormBuilder,
     private hogarService: HogarService,
@@ -53,6 +63,10 @@ export class TareaFormPage implements OnInit {
       this.modoEdicion = true;
       this.cargarTarea(this.tareaId);
     }
+  }
+
+  get hogarActivo(): boolean {
+    return !!this.hogarService.hogarActual?.codigo;
   }
 
   private initForm(): void {
@@ -94,7 +108,7 @@ export class TareaFormPage implements OnInit {
           titulo:            tarea.titulo,
           descripcion:       tarea.descripcion,
           prioridadCodigo:   tarea.prioridad?.codigo ?? 'BAJA',
-          categoria:         tarea.categoria,
+          categoria:         this.normalizarCategoria(tarea.categoria),
           fechaLimite:       tarea.fechaLimite,
           esPeriodica:       tarea.esPeriodica,
           periodicidadCodigo: tarea.periodicidad?.codigo ?? null,
@@ -137,27 +151,18 @@ export class TareaFormPage implements OnInit {
   }
 
   async guardar(): Promise<void> {
-    if (this.form.invalid) { return; }
-
-    const hogarCodigo = this.hogarService.hogarActual?.codigo ?? '';
-    if (!hogarCodigo) {
-      const toast = await this.toastCtrl.create({
-        message: 'Selecciona un hogar antes de guardar la tarea',
-        duration: 2500,
-        color: 'warning',
-      });
-      await toast.present();
+    if (this.form.invalid || !this.hogarActivo) {
       return;
     }
 
     this.cargando = true;
     const miembroIds = ((this.form.value.miembroIds ?? []) as string[]).filter(Boolean);
     const request: TareaRequest = {
-      hogarCodigo:       hogarCodigo,
+      hogarCodigo:       this.hogarService.hogarActual!.codigo,
       titulo:            this.form.value.titulo,
       descripcion:       this.form.value.descripcion,
       prioridadCodigo:   this.form.value.prioridadCodigo,
-      categoria:         this.form.value.categoria,
+      categoria:         this.form.value.categoria || undefined,
       fechaLimite:       this.form.value.fechaLimite || undefined,
       esPeriodica:       this.form.value.esPeriodica,
       periodicidadCodigo: this.form.value.periodicidadCodigo || undefined,
@@ -185,5 +190,13 @@ export class TareaFormPage implements OnInit {
 
   volver(): void {
     this.router.navigate(['/tareas']);
+  }
+
+  private normalizarCategoria(categoria: string | null | undefined): string {
+    if (!categoria) {
+      return '';
+    }
+
+    return this.categorias.some((item) => item.value === categoria) ? categoria : 'Otros';
   }
 }
